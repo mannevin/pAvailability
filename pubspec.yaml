@@ -34,12 +34,20 @@ dev_dependencies:
     sdk: flutter
 
   http: ^0.12.0+3
-  numberpicker: ^1.2.0
-  firebase_auth: ^0.15.2
+  numberpicker: ^1.2.1
+  firebase_core: ^0.4.4+3
+  firebase_auth: ^0.16.0
   google_sign_in: ^4.0.4
   geolocator: ^5.1.5
   flutter_custom_dialog: ^1.0.20
   rflutter_alert: ^1.0.3
+  url_launcher: ^5.5.0
+  custom_switch: ^0.0.1
+  flutter_material_pickers: ^1.7.1
+  mailer: ^3.0.4
+  getwidget: ^1.1.0
+
+
 
 
 # For information on the generic Dart part of this file, see the
@@ -52,7 +60,8 @@ flutter:
   # included with your application, so that you can use the icons in
   # the material Icons class.
   uses-material-design: true
-
+  assets:
+    - assets/
   # To add assets to your application, add an assets section, like this:
   # assets:
   #   - images/a_dot_burr.jpeg

@@ -5,7 +5,7 @@ import 'package:flutter/widgets.dart';
 import 'tennis.dart';
 import 'package:geolocator/geolocator.dart';
 import 'dart:math' show cos, sqrt, asin;
-import 'package:rflutter_alert/rflutter_alert.dart';
+import 'package:custom_switch/custom_switch.dart';
 
 
 
@@ -24,6 +24,7 @@ class courtOutline extends StatefulWidget {
 }
 
 class _courtOutlineState extends State<courtOutline> {
+  bool status = false;
 
   String courtName;
   bool check;
@@ -41,13 +42,18 @@ class _courtOutlineState extends State<courtOutline> {
   double lat;
   double long;
 
+  bool loc = false;
+
   double dis;
+
+  Position _currentPosition;
 
   double currentLat, currentLong;
 
   String value;
 
   bool toggleValue = false;
+
 
   void _getCourtInfo(String courtName) {
     switch (courtName) {
@@ -56,10 +62,8 @@ class _courtOutlineState extends State<courtOutline> {
         lights = true;
         bathrooms = true;
         address = "100 Grogans Point Rd";
-        //lat = 30.119880;
-        //long = -95.486930;
-        lat = currentLat;
-        long = currentLong;
+        lat = 30.119880;
+        long = -95.486930;
       }
       break;
       case ("Sawmill Park"): {
@@ -300,33 +304,30 @@ class _courtOutlineState extends State<courtOutline> {
     }
   }
 
-
-  void _getCurrentLocation() async {
-    final position = await Geolocator().getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+  getLocation() async {
+    Position position = await Geolocator().getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
     currentLat = position.latitude;
     currentLong = position.longitude;
+    print(currentLat);
+    print(currentLong);
+    print(lat);
+    print(long);
+    dis = calculateDistance(currentLat, currentLong, lat, long);
+
   }
 
+    double calculateDistance(lat1, lon1, lat2, lon2) {
+      var p = 0.017453292519943295;
+      var c = cos;
+      var a = 0.5 - c((lat2 - lat1) * p) / 2 +
+          c(lat1 * p) * c(lat2 * p) *
+              (1 - c((lon2 - lon1) * p)) / 2;
+      return 12742 * asin(sqrt(a));
+    }
 
-
-  checkedMethod() {
-    check = !check;
-    print(check);
-    _courtOutlineState(courtName, check);
-    build(context);
-  }
-  double calculateDistance(lat1, lon1, lat2, lon2){
-    var p = 0.017453292519943295;
-    var c = cos;
-    var a = 0.5 - c((lat2 - lat1) * p)/2 +
-        c(lat1 * p) * c(lat2 * p) *
-            (1 - c((lon2 - lon1) * p))/2;
-    return 12742 * asin(sqrt(a));
-  }
   Future back(context) async {
     Navigator.push(context, MaterialPageRoute(builder: (context) => tennis()));
   }
-  List<bool> isSelected = [false];
 
   @override
   Widget build(BuildContext context) {
@@ -482,46 +483,30 @@ class _courtOutlineState extends State<courtOutline> {
               ),
             ],
           ),
-          SizedBox(
-            height: MediaQuery.of(context).size.height*.37,
-          ),
+          Spacer(),
+          CustomSwitch(
+            activeColor: Colors.lightGreen,
+            value: status,
+            onChanged: (value) {
 
-          AnimatedContainer(
-            duration: Duration(milliseconds: 400),
-            height: 40,
-            width: 100,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(20.0),
-              color: Colors.grey.withOpacity(.5)
-            ),
-            child: Stack(
-              children: <Widget>[
-                AnimatedPositioned(
-                  duration: Duration(milliseconds: 400),
-                  curve: Curves.easeIn,
-                  top: 3.0,
-                  left: toggleValue ? 60 : 0,
-                  right: toggleValue ? 0 : 60,
-                  child: InkWell(
-                    onTap: toggleButton,
-                    child: AnimatedSwitcher(
-                      duration: Duration(milliseconds: 400),
-                      transitionBuilder:
-                          (Widget child, Animation<double> animation) {
-                        return RotationTransition(
-                            child: child, turns: animation);
-                      },
-                      child: toggleValue ? Icon(Icons.check_circle, color: Colors.lightGreen, size: 35,
-                      key: UniqueKey()
-                      ) : Icon(Icons.remove_circle_outline, color: Colors.redAccent, size: 35,
-                      key: UniqueKey()
-                      )
-                    ),
-                  ),
-                )
-              ],
-            ),
+              setState(() {
+                  getLocation();
+
+
+                  status = value;
+
+
+
+
+              });
+            },
           ),
+          SizedBox(height: 12.0,),
+          Text(status ? "Checked In" : "Checked out", style: TextStyle(
+              color: Colors.black,
+              fontSize: 20.0
+          ),),
+
 
 
           SizedBox(
@@ -563,41 +548,9 @@ class _courtOutlineState extends State<courtOutline> {
     );
   }
 
-  toggleButton() {
-    setState(() {
-      toggleValue = !toggleValue;
-      if (toggleValue) {
-        _getCurrentLocation();
-        dis = calculateDistance(currentLat, currentLong, lat, long);
-        if (dis <= .5) {
 
-        } else {
-          toggleValue = !toggleValue;
-          Alert(
 
-            context: context,
-            style: alertStyle,
-            type: AlertType.info,
-            title: "Failed Checkin",
-            desc: "Make sure your location is on and you are at the court",
 
-            buttons: [
-              DialogButton(
-                child: Text(
-                  "OK",
-
-                  style: TextStyle(color: Colors.white, fontSize: 20),
-                ),
-                onPressed: () => Navigator.of(context, rootNavigator: true).pop(),
-                color: Colors.lightGreen,
-                radius: BorderRadius.circular(15.0),
-              ),
-            ],
-          ).show();
-        }
-      }
-    });
-  }
 
 
   void showDialog() {
@@ -639,19 +592,38 @@ class _courtOutlineState extends State<courtOutline> {
   }
 
 }
-var alertStyle = AlertStyle(
-  animationType: AnimationType.fromTop,
-  isCloseButton: false,
-  isOverlayTapDismiss: false,
-  descStyle: TextStyle(fontWeight: FontWeight.bold),
-  animationDuration: Duration(milliseconds: 400),
-  alertBorder: RoundedRectangleBorder(
-    borderRadius: BorderRadius.circular(0.0),
-    side: BorderSide(
-      color: Colors.grey,
-    ),
-  ),
-  titleStyle: TextStyle(
-    color: Colors.red,
-  ),
-);
+showAlertDialog(BuildContext context) {
+  // set up the buttons
+  Widget cancelButton = FlatButton(
+    child: Text("Close"),
+    onPressed: () {
+      Navigator.of(context, rootNavigator: true).pop('dialog');
+
+    },
+  );
+
+
+
+  // set up the AlertDialog
+  AlertDialog alert = AlertDialog(
+
+    title: Text("Error"),
+    content: SizedBox(width: MediaQuery.of(context).size.width*.9,child:Text("Make sure you are near the court and your location is turned on.")),
+    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+    actions: [
+      cancelButton,
+
+    ],
+  );
+
+  // show the dialog
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return SizedBox(
+        width: MediaQuery.of(context).size.width*.9,
+        child: alert,
+      );
+    },
+  );
+}

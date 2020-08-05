@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "917000066064",
+    "firebase_url": "https://woodlandstownship-cd545.firebaseio.com",
+    "project_id": "woodlandstownship-cd545",
+    "storage_bucket": "woodlandstownship-cd545.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:917000066064:android:ac5b33bfd8e657ab7b6695",
+        "android_client_info": {
+          "package_name": "com.example.wtparkavailability"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "917000066064-69kur696r9fbqkl8djffnf5ev5224mgj.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.wtparkavailability",
+            "certificate_hash": "83a204e9bd6de5a63fb0a6a40a78411acf6beeaa"
+          }
+        },
+        {
+          "client_id": "917000066064-jcddpq2d9fpo0q085jm6kb8fm5qf9bt3.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDrVCZE-XM7hD5sXyFaQlY53wMLBHTwhR8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "917000066064-jcddpq2d9fpo0q085jm6kb8fm5qf9bt3.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
